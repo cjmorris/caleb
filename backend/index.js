@@ -12,6 +12,8 @@ app.use(express.json())
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))
 
+// The body from the GET request.
+let body;
 
 const request_data = {
     // region=15 gets the retals from the greater wellington region.
@@ -24,7 +26,7 @@ const request_data = {
 
 app.get('/listings', async function(req, res) {
     try {
-        let body = await request(request_data)
+        body = await request(request_data)
         body = JSON.parse(body)
         // Trim the data.
         const slimData = body.List.map((listing) => {
