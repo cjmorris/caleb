@@ -1,4 +1,8 @@
+// Dependencies
 require('dotenv').config();
+const request = require('request')
+const OAuth = require('oauth-1.0a')
+const crypto = require('crypto')
 
 const express = require('express')
 const app = express()
@@ -8,15 +12,6 @@ const port = 3000
 app.use(express.static('../frontend'));
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))
-
-const crypto = require('crypto')
-const OAuth = require('oauth-1.0a')
-
-
-// Dependencies
-const request = require('request')
-const OAuth = require('oauth-1.0a')
-const crypto = require('crypto')
 
 // Initialize
 const oauth = OAuth({
@@ -43,9 +38,9 @@ request(
     {
         url: request_data.url,
         method: request_data.method,
-        form: oauth.authorize(request_data, token),
+        form: oauth.authorize(request_data),
     },
     function(error, response, body) {
         // Process your data here
     }
-) () => console.log(`Example app listening on port ${port}!`))
+)
