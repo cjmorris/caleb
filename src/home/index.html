@@ -17,12 +17,18 @@
     </div>
 
     <script>
+      var latitude = 42.362432;
+      var longitude = -71.086086;
+
       // Create variable to hold map element, give initial settings to map
       var map = L.map('map',{ center: [42.362432, -71.086086], zoom: 14});
 
       // Add OpenStreetMap tile layer to map element
         L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap' }).addTo(map);
         
+      // Create point feature for Kendall Square T Station
+      var mydataPoint = L.marker([latitude, longitude]).addTo(map);
+
     </script>
 
 
