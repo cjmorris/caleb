@@ -18,6 +18,8 @@
       var rentals = [];
       var suburbStrings = [];
       var midPoints = [];
+      var markers = [];
+      var polygons = [];
 
     rentals = [];
 
@@ -27,7 +29,7 @@
     });
 
     // Create variable to hold map element, give initial settings to map
-    var map = L.map('map', { center: [-41.285267, 174.776822], zoom: 14 });
+    var map = L.map('map', { center: [-41.285267, 174.776822], zoom: 12 });
     // Add OpenStreetMap tile layer to map element
     L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap' }).addTo(map);
     // Create point feature for Kendall Square T Station
@@ -42,36 +44,60 @@
       // });
 
       $.getJSON("data/WCC_Suburbs_Boundaries.geojson",function(data){
-
        L.geoJson(data).addTo(map);
        data.features.forEach((element) => {
          suburbStrings.push(element.properties.suburb);
          calculateAverage(element);
        })
        midPoints.forEach((point) => {
-         //console.log("d");
          var myDataPoint = L.marker([point[1], point[0]], {icon: dataPointIcon}).addTo(map);
+         markers.push(myDataPoint);
        })
      });
 
       L.geoJson(data).addTo(map);
     });
 
+    map.on('zoomend', function() {
+      clearMap()
+      if(map._zoom >= 13){
+      rentals.forEach((element) => {
+            var myDataPoint = L.marker([element.geoLoc.Latitude, element.geoLoc.Longitude], { icon: dataPointIcon }).addTo(map);
+            markers.push(myDataPoint);
+            myDataPoint.bindTooltip("$" + element.rentPerRoom, { permanent: true }).openTooltip();
+            myDataPoint.bindPopup('<img src='+element.houseImage+ ' width="100" height="80"><br> <p>$' + element.rentPerRoom +
+              '<br>Bedrooms: ' + element.bedrooms + '<br>Bathrooms: ' + element.bathrooms +'</p>');
+        })
+      } else if(map._zoom < 13){
+        midPoints.forEach((point) => {
+          var myDataPoint = L.marker([point[1], point[0]], {icon: dataPointIcon}).addTo(map);
+          markers.push(myDataPoint);
+        })
+      }
+    });
+
     $.getJSON("http://localhost:3000/listings", function (data) {
 
       //console.log(data);
       data.forEach((element) => {
+        console.log(element);
         rentals.push(element);
       })
 
-      rentals.forEach((element) => {
-        
-        var myDataPoint = L.marker([element.geoLoc.Latitude, element.geoLoc.Longitude], { icon: dataPointIcon }).addTo(map);
-        myDataPoint.bindTooltip("$" + element.rentPerRoom, { permanent: true }).openTooltip();
-        myDataPoint.bindPopup('<img src='+element.houseImage+ ' width="100" height="80"><br> <p>$' + element.rentPerRoom + 
-          '<br>Bedrooms: ' + element.bedrooms + '<br>Bathrooms: ' + element.bathrooms +'</p>');
-      })
     });
+      function clearMap(){
+        markers.forEach((marker) => {
+          if (marker) { // check
+            map.removeLayer(marker); // remove
+          }
+        })
+        regions.forEach((region) => {
+          if (region) { // check
+            map.removeLayer(region); // remove
+          }
+        })
+      }
+
 
       function calculateAverage(element) {
         var maxLong = 170.0;
