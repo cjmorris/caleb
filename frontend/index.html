@@ -1,59 +1,55 @@
 <html>
-  <head>
-    <meta charset="utf-8">
-    <script type="text/javascript" src="js/main.js"></script>
-    <script src="jquery.js"></script>
-    <!-- <link rel="stylesheet" type="text/css" href="index.css"> -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css" />
-  </head>
 
-  <body>
+<head>
+  <meta charset="utf-8">
+  <script type="text/javascript" src="js/main.js"></script>
+  <script src="jquery.js"></script>
+  <!-- <link rel="stylesheet" type="text/css" href="index.css"> -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css" />
+</head>
 
-    <script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet.js"></script>
+<body>
 
-    <div id="map" style="width: 100%; height: 100%">
+  <script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet.js"></script>
 
-    </div>
+  <div id="map" style="width: 100%; height: 100%">
 
-    <script>
-      rentals = [];
+  </div>
 
-      var dataPointIcon = L.icon({
-        iconUrl: '/Images/PointMarker.png',
-        iconSize: [20, 20],
-      });
+  <script>
+    rentals = [];
 
-      // Create variable to hold map element, give initial settings to map
-      var map = L.map('map',{ center: [-41.285267, 174.776822], zoom: 14});
-      // Add OpenStreetMap tile layer to map element
-      L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap' }).addTo(map);
-      // Create point feature for Kendall Square T Station
+    var dataPointIcon = L.icon({
+      iconUrl: '/Images/PointMarker.png',
+      iconSize: [20, 20],
+    });
 
-       $.getJSON("data/WCC_Suburbs_Boundaries.geojson",function(data){
+    // Create variable to hold map element, give initial settings to map
+    var map = L.map('map', { center: [-41.285267, 174.776822], zoom: 14 });
+    // Add OpenStreetMap tile layer to map element
+    L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap' }).addTo(map);
+    // Create point feature for Kendall Square T Station
 
-        L.geoJson(data).addTo(map);
-      });
+    $.getJSON("data/WCC_Suburbs_Boundaries.geojson", function (data) {
 
-      $.getJSON("http://localhost:3000/listings", function(data){
+      L.geoJson(data).addTo(map);
+    });
 
-       //console.log(data);
-       data.forEach((element) => {
-         rentals.push(element);
-       })
+    $.getJSON("http://localhost:3000/listings", function (data) {
 
-       rentals.forEach((element) =>{
-         var myDataPoint = L.marker([element.geoLoc.Latitude, element.geoLoc.Longitude], {icon: dataPointIcon}).addTo(map);
-         myDataPoint.bindTooltip("$"+element.rentPerRoom, {permanent: true}).openTooltip();
+      //console.log(data);
+      data.forEach((element) => {
+        rentals.push(element);
+      })
 
-         myDataPoint.bindPopup('<img src="../../Images/housePlaceholder.jpg" width="100" height="80"><br> <p>$'+element.rentPerRoom+'</p>');
-       })
-     });
+      rentals.forEach((element) => {
+        var myDataPoint = L.marker([element.geoLoc.Latitude, element.geoLoc.Longitude], { icon: dataPointIcon }).addTo(map);
+        myDataPoint.bindTooltip("$" + element.rentPerRoom, { permanent: true }).openTooltip();
+        myDataPoint.bindPopup('<img src='+element.houseImage+ ' width="100" height="80"><br> <p>$' + element.rentPerRoom + 
+          '<br>Bedrooms: ' + element.bedrooms + '<br>Bathrooms: ' + element.bathrooms +'</p>');
+      })
+    });
 
-
-
-    </script>
-
-
-
+  </script>
 
 </html>

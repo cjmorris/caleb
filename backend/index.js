@@ -42,6 +42,9 @@ app.get('/listings', async function(req, res) {
             return {
                 geoLoc: listing.GeographicLocation,
                 rentPerRoom: Math.ceil(listing.RentPerWeek / listing.Bedrooms),
+                houseImage: listing.PictureHref,
+                bathrooms: listing.Bathrooms,
+                bedrooms: listing.Bedrooms,
                 id: listing.ListingId,
             }
         })
