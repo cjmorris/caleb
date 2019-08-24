@@ -45,3 +45,21 @@ app.get('/listings', async function(req, res) {
     }
 })
 
+app.get('/listings/:id', async (req, res) => {
+    try {
+        // Check body exists.
+        if (body === undefined){
+            res.status(404).end();
+        } else {
+            // Find the listing with the id provided in the params.
+            let listing = body.List.find( l => {
+                return l.ListingId === parseInt(req.params.id);
+            });
+            return res.json(listing)
+        }
+    } catch(err) {
+        // Log errors.
+        console.error(err);
+    }
+})
+
