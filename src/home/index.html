@@ -26,6 +26,7 @@
         iconUrl: '../../Images/PointMarker.png',
         iconSize: [20, 20],
       });
+
       // Create variable to hold map element, give initial settings to map
       var map = L.map('map',{ center: locationPoint, zoom: 14});
 
@@ -35,11 +36,9 @@
       // Create point feature for Kendall Square T Station
       var myDataPoint = L.marker(locationPoint, {icon: dataPointIcon}).addTo(map);
 
-
-
       function customTipOpen() {
         if(!this.isPopupOpen())
-          this.bindTooltip("$200", {permanent: true}).openTooltip();
+          this.bindTooltip("$200", {permanent:true}).openTooltip();
       }
       
       function customPopup(){
