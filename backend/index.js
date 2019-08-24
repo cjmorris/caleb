@@ -24,6 +24,10 @@ const request_data = {
 request(
     request_data,
     function(error, response, body) {
+        // Log error if GET fails.
+        if (error !== null) {
+            console.log(error)
+        }
         // JSON.parse(body) returns the JSON object of all rentals.
         console.log(JSON.parse(body))
     }
