@@ -31,7 +31,8 @@ app.get('/listings', async function(req, res) {
             // Takes the geo location and calculates the rent per room for listing.
             return {
                 geoLoc: listing.GeographicLocation,
-                rentPerRoom: Math.ceil(listing.RentPerWeek / listing.Bedrooms)
+                rentPerRoom: Math.ceil(listing.RentPerWeek / listing.Bedrooms),
+                id: listing.ListingId,
             }
         })
         // return Trade Me response body to web client
