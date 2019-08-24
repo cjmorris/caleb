@@ -38,10 +38,13 @@ app.get('/listings', async function(req, res) {
         body = JSON.parse(body)
         // Trim the data.
         const slimData = body.List.map((listing) => {
-            // Takes the geo location and calculates the rent per room for listing.
+            // Takes the geo location, number of bedrooms, number of bathrooms, image and calculates the rent per room for listing.
             return {
                 geoLoc: listing.GeographicLocation,
+                houseImage: listing.PictureHref,
                 rentPerRoom: Math.ceil(listing.RentPerWeek / listing.Bedrooms),
+                bedrooms: listing.Bedrooms,
+                bathrooms: listing.Bathrooms,
                 id: listing.ListingId,
             }
         })
