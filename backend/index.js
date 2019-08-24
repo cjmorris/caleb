@@ -26,10 +26,19 @@ app.get('/listings', async function(req, res) {
     try {
         let body = await request(request_data)
         body = JSON.parse(body)
+        // Trim the data.
+        const slimData = body.List.map((listing) => {
+            // Takes the geo location and calculates the rent per room for listing.
+            return {
+                geoLoc: listing.GeographicLocation,
+                rentPerRoom: Math.ceil(listing.RentPerWeek / listing.Bedrooms)
+            }
+        })
         // return Trade Me response body to web client
-        res.json(body);
+        res.json(slimData);
     } catch(err) {
         // If an error happens log it
         console.error(err);
     }
 })
+
