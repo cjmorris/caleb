@@ -18,11 +18,15 @@
 
     <script>
       // Create variable to hold map element, give initial settings to map
-      var map = L.map('map',{ center: [42.362432, -71.086086], zoom: 14});
-
+      var map = L.map('map',{ center: [-41.285267, 174.776822], zoom: 14});
       // Add OpenStreetMap tile layer to map element
-        L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap' }).addTo(map);
-        
+      L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap' }).addTo(map);
+      // Create point feature for Kendall Square T Station
+      var myDataPoint = L.marker([-41.285267, 174.776822]).addTo(map);
+
+      var myArea = L.polygon([[42.353770, -71.103606], [42.355447, -71.104475],
+          [42.362681, -71.089830], [42.361829, -71.079230]],
+          {color: 'blue', weight: 4}).addTo(map);
     </script>
 
 
