@@ -1,6 +1,6 @@
 // Dependencies
 require('dotenv').config();
-const request = require('request')
+const request = require('request-promise-native')
 
 const express = require('express')
 const app = express()
@@ -8,6 +8,7 @@ const port = 3000
 
 // Serves the frontend.
 app.use(express.static('../frontend'));
+app.use(express.json())
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))
 
@@ -21,10 +22,12 @@ const request_data = {
     method: 'GET',
 }
 
-request(
-    request_data,
-    function(error, response, body) {
-        // JSON.parse(body) returns the JSON object of all rentals.
-        console.log(JSON.parse(body))
+app.get('/listings', async function(req, res) {
+    try {
+        let body = await request(request_data)
+        body = JSON.parse(body)
+        res.json(body);
+    } catch(err) {
+        console.error(err);
     }
-)
+})
