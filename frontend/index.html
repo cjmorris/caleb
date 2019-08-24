@@ -43,6 +43,10 @@
       })
 
       rentals.forEach((element) => {
+<<<<<<< HEAD
+=======
+        
+>>>>>>> 9597477f92d069c2c32501af59f1c98b8de18c04
         var myDataPoint = L.marker([element.geoLoc.Latitude, element.geoLoc.Longitude], { icon: dataPointIcon }).addTo(map);
         myDataPoint.bindTooltip("$" + element.rentPerRoom, { permanent: true }).openTooltip();
         myDataPoint.bindPopup('<img src='+element.houseImage+ ' width="100" height="80"><br> <p>$' + element.rentPerRoom + 
