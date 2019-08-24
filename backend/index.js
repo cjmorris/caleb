@@ -6,7 +6,15 @@ const express = require('express')
 const app = express()
 const port = 3000
 
+const allowCrossOriginRequests = function (req, res, next) {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, X-Authorization');
+    res.header('Access-Control-Allow-Methods', 'GET, POST, PATCH, DELETE');
+    next();
+};
+
 // Serves the frontend.
+app.use(allowCrossOriginRequests)
 app.use(express.static('../frontend'));
 app.use(express.json())
 
