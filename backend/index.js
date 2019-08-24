@@ -1,4 +1,4 @@
-
+require('dotenv').config();
 
 const express = require('express')
 const app = express()
@@ -20,8 +20,8 @@ const crypto = require('crypto')
 // Initialize
 const oauth = OAuth({
     consumer: {
-        key: 'xvz1evFS4wEEPTGEFPHBog',
-        secret: 'kAcSOqF21Fu85e7zjz7ZN2U4ZRhfV3WpwPAoE3Z7kBw',
+        key: process.env.consumer_key,
+        secret: process.env.consumer_secret,
     },
     signature_method: 'HMAC-SHA1',
     hash_function(base_string, key) {
