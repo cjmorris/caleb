@@ -125,6 +125,8 @@ app.get('/gwrAverages', async (req, res) => {
     }
 })
 
+
+
 /**
  * Get the number of name occurances in array.
  * @param arry the array.

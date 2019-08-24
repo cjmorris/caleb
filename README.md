@@ -108,5 +108,29 @@ response
 }
 ```
 
+GET /localhost:3000/gwrAverages
+returns the average rental prices per room per suburb.
 
+```json
+[   {
+        "Name": "Brooklyn",
+        "avgRent": 274
+    },
+    {
+        "Name": "Churton Park",
+        "avgRent": 218
+    },
+    {
+        "Name": "Hataitai",
+        "avgRent": 230
+    },
+    {
+        "Name": "Houghton Bay",
+        "avgRent": 339
+    },
+    {
+        "Name": "Island Bay",
+        "avgRent": 312
+    }]
+```
 
