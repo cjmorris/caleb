@@ -16,7 +16,9 @@
     </div>
 
     <script>
-      rentals = [];
+      var rentals = [];
+      var suburbStrings = [];
+      var midPoints = [];
 
       var dataPointIcon = L.icon({
         iconUrl: '/Images/PointMarker.png',
@@ -29,28 +31,74 @@
       L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap' }).addTo(map);
       // Create point feature for Kendall Square T Station
 
-       $.getJSON("data/WCC_Suburbs_Boundaries.geojson",function(data){
+      //  $.getJSON("data/porirua-suburbs.json",function(data){
+      //
+      //   L.geoJson(data).addTo(map);
+      //   // data.features.forEach((element) => {
+      //   //   console.log(element.properties.suburb);
+      //   // })
+      // });
 
-        L.geoJson(data).addTo(map);
-      });
+      $.getJSON("data/WCC_Suburbs_Boundaries.geojson",function(data){
+
+       L.geoJson(data).addTo(map);
+       data.features.forEach((element) => {
+         suburbStrings.push(element.properties.suburb);
+         calculateAverage(element);
+       })
+       midPoints.forEach((point) => {
+         //console.log("d");
+         var myDataPoint = L.marker([point[1], point[0]], {icon: dataPointIcon}).addTo(map);
+       })
+     });
 
       $.getJSON("http://localhost:3000/listings", function(data){
 
-       //console.log(data);
        data.forEach((element) => {
          rentals.push(element);
        })
 
        rentals.forEach((element) =>{
-         var myDataPoint = L.marker([element.geoLoc.Latitude, element.geoLoc.Longitude], {icon: dataPointIcon}).addTo(map);
-         myDataPoint.bindTooltip("$"+element.rentPerRoom, {permanent: true}).openTooltip();
+         // var myDataPoint = L.marker([element.geoLoc.Latitude, element.geoLoc.Longitude], {icon: dataPointIcon}).addTo(map);
+         // myDataPoint.bindTooltip("$"+element.rentPerRoom, {permanent: true}).openTooltip();
+         // myDataPoint.bindPopup('<img src="../../Images/housePlaceholder.jpg" width="100" height="80"><br> <p>$'+element.rentPerRoom+'</p>');
 
-         myDataPoint.bindPopup('<img src="../../Images/housePlaceholder.jpg" width="100" height="80"><br> <p>$'+element.rentPerRoom+'</p>');
        })
      });
 
 
 
+      function calculateAverage(element) {
+        var maxLong = 170.0;
+        var minLong = 180.0;
+        var maxLat = -50.0
+        var minLat = -40.0;
+        if(element.properties.suburb == "Island Bay"){ //contains 3 polygons
+          midPoints.push([174.771539, -41.336723]);
+        }else{
+          element.geometry.coordinates.forEach((instance) => {
+            instance.forEach((coord) => {
+              if(coord[0] > maxLong){
+                maxLong = coord[0];
+              }
+              if(coord[0] < minLong){
+                minLong = coord[0];
+              }
+              if(coord[1] > maxLat){
+                maxLat = coord[1];
+              }
+              if(coord[1] < minLat){
+                minLat = coord[1];
+              }
+            })
+            latLong = [];
+            latLong[0] = minLong+((maxLong-minLong)/2);
+            latLong[1] = minLat+((maxLat-minLat)/2);
+
+            midPoints.push(latLong);
+          })
+        }
+      }
     </script>
 
 
