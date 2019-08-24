@@ -26,8 +26,10 @@ app.get('/listings', async function(req, res) {
     try {
         let body = await request(request_data)
         body = JSON.parse(body)
+        // return Trade Me response body to web client
         res.json(body);
     } catch(err) {
+        // If an error happens log it
         console.error(err);
     }
 })
