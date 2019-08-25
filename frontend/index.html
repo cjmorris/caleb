@@ -48,6 +48,7 @@
       }
 
       var populateSidebarCityPrices = function (regionPrices) {
+        clearSidebar();
         var bar = $("#sidebar");
         bar.append("<h2>Wellington</h2>");
         regionPrices.forEach(function(element) {
@@ -56,6 +57,7 @@
       }
 
       var populateSidebarSuburbInfo = function (imageUrl, name, desc, median, available) {
+          clearSidebar();
         $("#sidebar").append(`<img id="sidebarImage" src="${imageUrl}" style="object-fit: cover; width: 100%;"/>`)
           .append(`<h2>${name}</h2>`)
           .append(`<p>${desc}</p>`)
@@ -68,6 +70,7 @@
       }
 
       var populatePropertyInfo = function (imageUrl, address, suburb, total, room, bedroom, bathroom, garage, link) {
+          clearSidebar();
         $("#sidebar").append(`<img id="sidebarImage" src="${imageUrl}" style="object-fit: cover; width: 100%;"/>`)
           .append(`<h2>${address}<br/>${suburb}<br/>Wellington</h2>`)
           .append(`<p>$${total} per week </p>`)
@@ -79,10 +82,11 @@
       }
 
       var rentals = [];
-      var suburbStrings = [];
+      var suburbs = [];
       var midPoints = [];
       var markers = [];
       var polygons = [];
+      var savedData;
       regions = [["Te Aro", 300], ["Kelburn", 200], ["Mount Victoria", 250]];
       var dataPointIcon = L.icon({
         iconUrl: '/Images/PointMarker.png',
@@ -99,12 +103,15 @@
 
         L.geoJson(data).addTo(map);
         data.features.forEach((element) => {
-         suburbStrings.push(element.properties.suburb);
+         suburbs.push(element);
          calculateAverage(element);
+
       });
 
+
+
       $.getJSON("http://localhost:3000/listings", function(data){
-      
+
        //console.log(data);
        data.forEach((element) => {
          rentals.push(element);
@@ -113,10 +120,16 @@
          var myDataPoint = L.marker([point[1], point[0]], {icon: dataPointIcon}).addTo(map);
          markers.push(myDataPoint);
        })
+       //console.log(midPoints)
      });
 
       L.geoJson(data).addTo(map);
     });
+
+    $.getJSON("http://localhost:3000/gwrAverages", function(data){
+      savedData = data;
+      loadSubPrices();
+    })
 
     map.on('zoomend', function() {
       //clearMap()
@@ -137,7 +150,8 @@
               '<br>Bedrooms: ' + element.bedrooms + '<br>Bathrooms: ' + element.bathrooms +'</p>');
         })
       } else if(map._zoom == 14){
-        clearMap()
+        clearMap();
+        loadSubPrices();
         midPoints.forEach((point) => {
           var myDataPoint = L.marker([point[1], point[0]], {icon: dataPointIcon}).addTo(map);
           markers.push(myDataPoint);
@@ -149,7 +163,6 @@
 
       //console.log(data);
       data.forEach((element) => {
-        console.log(element);
         rentals.push(element);
       })
 
@@ -167,6 +180,23 @@
         // })
       }
 
+      function loadSubPrices(){
+        savedData.forEach((element) => {
+          var index = findSuburb(element.Name);
+          var myDataPoint = L.marker([midPoints[index][1], midPoints[index][0]], {icon: dataPointIcon}).addTo(map);
+          markers.push(myDataPoint);
+          myDataPoint.bindTooltip("$" + element.avgRent, { permanent: true }).openTooltip();
+        })
+      }
+
+      function findSuburb(sub){
+        for(var i = 0;i<suburbs.length;i++){
+          if(suburbs[i].properties.suburb === sub){
+            return i;
+          }
+        }
+
+      }
 
       function calculateAverage(element) {
         var maxLong = 170.0;
