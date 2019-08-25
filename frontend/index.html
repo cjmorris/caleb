@@ -52,9 +52,7 @@
         clearSidebar();
         var bar = $("#sidebar");
         bar.append("<h2>Wellington</h2>");
-        console.log()
         regionPrices.forEach(function(element) {
-          console.log(element);
           bar.append(`<p>${element.Name} - $${element.avgRent}</p>`);
         });
       }
@@ -86,7 +84,9 @@
       }
 
       var rentals = [];
-      var suburbStrings = [];
+      var suburbs = [];
+      var subsWithPrices = [];
+      var prices = [];
       var midPoints = [];
       var markers = [];
       var polygons = [];
@@ -107,10 +107,10 @@
 
         L.geoJson(data).addTo(map);
         data.features.forEach((element) => {
-         suburbStrings.push(element.properties.suburb);
+         suburbs.push(element);
          calculateAverage(element);
       });
-      loadSuburbs();
+
     });
 
 
@@ -128,7 +128,8 @@
          data.forEach((element) => {
            averages.push(element);
          })
-        //averages = data;
+        mapStrings();
+        loadSuburbs();
       });
 
        midPoints.forEach((point) => {
@@ -159,6 +160,28 @@
       midPoints.forEach((point) => {
         var myDataPoint = L.marker([point[1], point[0]], {icon: dataPointIcon}).addTo(map);
         markers.push(myDataPoint);
+      })
+
+      for (var i = 0; i < subsWithPrices.length; i++) {
+        console.log(subsWithPrices);
+        var sub = calculateAverage(subsWithPrices);
+        console.log(sub);
+        var myDataPoint = L.marker(calculateAverage(subsWithPrices[i]), {icon: dataPointIcon}).addTo(map);
+        myDataPoint.bindTooltip("$" + prices[i], { permanent: true }).openTooltip();
+        markers.push(myDataPoint);
+      }
+
+    }
+
+    function mapStrings(){
+      suburbs.forEach((sub) => {
+        averages.forEach((ave) => {
+          if(sub.properties.suburb == ave.Name){
+            //console.log(ave.Name);
+            subsWithPrices.push(sub);
+            prices.push(ave.avgRent);
+          }
+        })
       })
     }
 
@@ -212,12 +235,13 @@
             latLong = [];
             latLong[0] = minLong+((maxLong-minLong)/2);
             latLong[1] = minLat+((maxLat-minLat)/2);
-
             midPoints.push(latLong);
+            //console.log(latLong);
+            return latLong;
+
           })
         }
       }
-      console.log(averages);
     </script>
 
 </html>
