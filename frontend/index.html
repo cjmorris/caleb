@@ -166,6 +166,7 @@
       } else if(map._zoom == 14){
         clearMap();
         loadSubPrices();
+        populateSidebarCityPrices(averages);
         midPoints.forEach((point) => {
           var myDataPoint = L.marker([point[1], point[0]], {icon: dataPointIcon}).addTo(map);
           markers.push(myDataPoint);
@@ -246,7 +247,7 @@
         var minLong = 180.0;
         var maxLat = -50.0
         var minLat = -40.0;
-        
+
         if(element.properties.suburb === "Island Bay"){ //contains 3 polygons
           midPoints.push([174.771539, -41.336723]);
         }else{
