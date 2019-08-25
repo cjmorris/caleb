@@ -121,6 +121,7 @@ app.get('/gwrAverages', async (req, res) => {
                 avgSubRent.push({Name: sub.Name, avgRent: Math.ceil(avgrent/temp.length)})
             }
         })
+        console.log(avgSubRent)
         return res.json(avgSubRent)
     } catch(err) {
         // Log errors.

@@ -19,6 +19,7 @@
         height: 100%;
         float: left;
         background-color: rgb(105, 19, 145);
+        overflow-y: scroll;
       }
 
       a {
@@ -48,14 +49,18 @@
       }
 
       var populateSidebarCityPrices = function (regionPrices) {
+        clearSidebar();
         var bar = $("#sidebar");
         bar.append("<h2>Wellington</h2>");
+        console.log()
         regionPrices.forEach(function(element) {
-          bar.append(`<p>${element[0]} - $${element[1]}</p>`);
+          console.log(element);
+          bar.append(`<p>${element.Name} - $${element.avgRent}</p>`);
         });
       }
 
       var populateSidebarSuburbInfo = function (imageUrl, name, desc, median, available) {
+        clearSidebar();
         $("#sidebar").append(`<img id="sidebarImage" src="${imageUrl}" style="object-fit: cover; width: 100%;"/>`)
           .append(`<h2>${name}</h2>`)
           .append(`<p>${desc}</p>`)
@@ -68,6 +73,7 @@
       }
 
       var populatePropertyInfo = function (imageUrl, address, suburb, total, room, bedroom, bathroom, garage, link, desc) {
+        clearSidebar();
         $("#sidebar").append(`<img id="sidebarImage" src="${imageUrl}" style="object-fit: cover; width: 100%;"/>`)
           .append(`<h2>${address}<br/>${suburb}<br/>Wellington</h2>`)
           .append(`<p>$${total} per week </p>`)
@@ -84,6 +90,7 @@
       var midPoints = [];
       var markers = [];
       var polygons = [];
+      var averages = [];
       regions = [["Te Aro", 300], ["Kelburn", 200], ["Mount Victoria", 250]];
       var dataPointIcon = L.icon({
         iconUrl: '/Images/PointMarker.png',
@@ -103,21 +110,33 @@
          suburbStrings.push(element.properties.suburb);
          calculateAverage(element);
       });
+      loadSuburbs();
+    });
+
+
 
       $.getJSON("http://localhost:3000/listings", function(data){
-      
+
        //console.log(data);
        data.forEach((element) => {
          rentals.push(element);
-       })
+       });
+     });
+       $.getJSON("http://localhost:3000/gwrAverages", function(data){
+
+        //console.log(data);
+         data.forEach((element) => {
+           averages.push(element);
+         })
+        //averages = data;
+      });
+
        midPoints.forEach((point) => {
          var myDataPoint = L.marker([point[1], point[0]], {icon: dataPointIcon}).addTo(map);
          markers.push(myDataPoint);
        })
-     });
 
-      L.geoJson(data).addTo(map);
-    });
+
 
     map.on('zoomend', function() {
       //clearMap()
@@ -131,22 +150,27 @@
               '<br>Bedrooms: ' + element.bedrooms + '<br>Bathrooms: ' + element.bathrooms +'</p>');
         })
       } else if(map._zoom == 14){
-        clearMap()
-        midPoints.forEach((point) => {
-          var myDataPoint = L.marker([point[1], point[0]], {icon: dataPointIcon}).addTo(map);
-          markers.push(myDataPoint);
-        })
+        loadSuburbs();
       }
     });
+
+    function loadSuburbs(){
+      clearMap()
+      midPoints.forEach((point) => {
+        var myDataPoint = L.marker([point[1], point[0]], {icon: dataPointIcon}).addTo(map);
+        markers.push(myDataPoint);
+      })
+    }
+
 
     $.getJSON("http://localhost:3000/listings", function (data) {
 
       //console.log(data);
       data.forEach((element) => {
-        console.log(element);
+        //console.log(element);
         rentals.push(element);
       })
-
+      populateSidebarCityPrices(averages);
     });
       function clearMap(){
         markers.forEach((marker) => {
@@ -193,6 +217,7 @@
           })
         }
       }
+      console.log(averages);
     </script>
 
 </html>
