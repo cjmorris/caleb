@@ -67,7 +67,7 @@
         $('#sidebarImage').css({'height':imgWidth+'px'});
       }
 
-      var populatePropertyInfo = function (imageUrl, address, suburb, total, room, bedroom, bathroom, garage, link, desc) {
+      var populatePropertyInfo = function (imageUrl, address, suburb, total, room, bedroom, bathroom, garage, link) {
         $("#sidebar").append(`<img id="sidebarImage" src="${imageUrl}" style="object-fit: cover; width: 100%;"/>`)
           .append(`<h2>${address}<br/>${suburb}<br/>Wellington</h2>`)
           .append(`<p>$${total} per week </p>`)
@@ -75,8 +75,7 @@
           .append(`<p>${bedroom} bedroom</p>`)
           .append(`<p>${bathroom} bathroom</p>`)
           .append(`<p>${garage} garage</p>`)
-          .append(`<a href="${link}">Listing</a>`)
-          .append(`<p>${desc}</p>`);
+          .append(`<a href="${link}">Listing</a>`);
       }
 
       var rentals = [];
@@ -124,7 +123,14 @@
       if(map._zoom == 15){
       clearMap()
       rentals.forEach((element) => {
-            var myDataPoint = L.marker([element.geoLoc.Latitude, element.geoLoc.Longitude], { icon: dataPointIcon }).addTo(map);
+            var myDataPoint = L.marker([element.geoLoc.Latitude, element.geoLoc.Longitude], { icon: dataPointIcon, id: element.id });
+            myDataPoint.addTo(map);
+            myDataPoint.on("click", function(event) {
+                $.getJSON(`http://localhost:3000/listings/${this.options.id}`, function (data) {
+                    populatePropertyInfo(data.PictureHref, data.Address, data.Suburb, data.RentPerWeek, Math.ceil(data.RentPerWeek / data.Bedrooms),
+                    data.Bedrooms, data.Bathrooms, data.Parking, "https://www.trademe.co.nz/Browse/Listing.aspx?id=" + data.ListingId)
+                })
+            });
             markers.push(myDataPoint);
             myDataPoint.bindTooltip("$" + element.rentPerRoom, { permanent: true }).openTooltip();
             myDataPoint.bindPopup('<img src='+element.houseImage+ ' width="100" height="80"><br> <p>$' + element.rentPerRoom +
