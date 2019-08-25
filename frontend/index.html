@@ -59,8 +59,9 @@
     });
 
     map.on('zoomend', function() {
+      //clearMap()
+      if(map._zoom == 15){
       clearMap()
-      if(map._zoom >= 13){
       rentals.forEach((element) => {
             var myDataPoint = L.marker([element.geoLoc.Latitude, element.geoLoc.Longitude], { icon: dataPointIcon }).addTo(map);
             markers.push(myDataPoint);
@@ -68,7 +69,8 @@
             myDataPoint.bindPopup('<img src='+element.houseImage+ ' width="100" height="80"><br> <p>$' + element.rentPerRoom +
               '<br>Bedrooms: ' + element.bedrooms + '<br>Bathrooms: ' + element.bathrooms +'</p>');
         })
-      } else if(map._zoom < 13){
+      } else if(map._zoom == 14){
+        clearMap()
         midPoints.forEach((point) => {
           var myDataPoint = L.marker([point[1], point[0]], {icon: dataPointIcon}).addTo(map);
           markers.push(myDataPoint);
