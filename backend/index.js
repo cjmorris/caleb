@@ -23,9 +23,9 @@ app.listen(port, () => console.log(`Example app listening on port ${port}!`))
 // The body from the GET request.
 let body;
 
-const request_listings_data = {
-    // region=15 gets the retals from the lesser wellington region.
-    url: 'https://api.trademe.co.nz/v1/Search/Property/Rental.json?district=47',
+const request_data = {
+    // region=15 gets the retals from the greater wellington region.
+    url: 'https://api.trademe.co.nz/v1/Search/Property/Rental.json?region=47?photo_size=FullSize',
     headers: {
         'Authorization': `OAuth oauth_consumer_key="${process.env.consumer_key}", oauth_signature_method="PLAINTEXT", oauth_signature="${process.env.consumer_secret}&"`
     },
