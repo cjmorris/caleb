@@ -10,6 +10,8 @@
 
 `node index.js` to run the server on port 3000.
 
+Trade Me API Credentials should be stored in a `.env` file in the `backend/` directory
+
 ### Backend API endpoints:
 
 Requires TradeMe API consumer key and secret.
@@ -25,8 +27,11 @@ response
               "Northing": 5428829,
               "Easting": 1748183,
               "Accuracy": 1
-              },
+              },      
    "rentPerRoom": 120,
+   "bathrooms":2,
+   "bedrooms":3,
+   "houseImage":"https://trademe.tmcdn.co.nz/photoserver/thumb/1127436451.jpg",
    "id": 2286698047
 }] 
 ```
@@ -136,3 +141,16 @@ returns the average rental prices per room per suburb.
 
 ### Frontend 
 
+Leaflet was used to make the map and the markers with the interactions of the popup and the tiptool.
+
+The data points `myDataPoint` stores the marker information of the popups and tooltips.
+
+An array `rentals` is populated using the backend listing data stored in the `http://localhost:3000/listings`. The data stored in rentals is displayed on the marker popup and tooltip:
+*  popup uses the following data: `houseImage`, `rentPerRoom`, `bedrooms`, `bathrooms`.
+*  tooltip uses the following data: `rentPerRoom`. The tooltip is set to `{permanent: true}` so it can always be displayed to the user for easier comparison.
+
+The map updates according to the zoom of the map. If the map is zoomed zoomed in (15), we will have all the marker of each rental house displayed. Otherwise, if the map is zoomed out (14), we will have the marker of the average price per room in a suburb.
+
+The function clearSidebar clears the sidebar from any data htat was being displayed.
+
+The function `calculateAverage` calculates the mid point of the coordinates of each suburb. The function appends all the mid points to an array.
