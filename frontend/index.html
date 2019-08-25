@@ -70,8 +70,8 @@
         $('#sidebarImage').css({'height':imgWidth+'px'});
       }
 
-      var populatePropertyInfo = function (imageUrl, address, suburb, total, room, bedroom, bathroom, garage, link, desc) {
-        clearSidebar();
+      var populatePropertyInfo = function (imageUrl, address, suburb, total, room, bedroom, bathroom, garage, link) {
+          clearSidebar();
         $("#sidebar").append(`<img id="sidebarImage" src="${imageUrl}" style="object-fit: cover; width: 100%;"/>`)
           .append(`<h2>${address}<br/>${suburb}<br/>Wellington</h2>`)
           .append(`<p>$${total} per week </p>`)
@@ -79,8 +79,7 @@
           .append(`<p>${bedroom} bedroom</p>`)
           .append(`<p>${bathroom} bathroom</p>`)
           .append(`<p>${garage} garage</p>`)
-          .append(`<a href="${link}">Listing</a>`)
-          .append(`<p>${desc}</p>`);
+          .append(`<a href="${link}">Listing</a>`);
       }
 
       var rentals = [];
@@ -91,6 +90,7 @@
       var markers = [];
       var polygons = [];
       var averages = [];
+      var savedData;
       regions = [["Te Aro", 300], ["Kelburn", 200], ["Mount Victoria", 250]];
       var dataPointIcon = L.icon({
         iconUrl: '/Images/PointMarker.png',
@@ -109,9 +109,10 @@
         data.features.forEach((element) => {
          suburbs.push(element);
          calculateAverage(element);
+
       });
 
-    });
+    }); //this
 
 
 
@@ -137,21 +138,38 @@
          markers.push(myDataPoint);
        })
 
+//Put here
 
+    $.getJSON("http://localhost:3000/gwrAverages", function(data){
+      savedData = data;
+      loadSubPrices();
+    })
 
     map.on('zoomend', function() {
       //clearMap()
       if(map._zoom == 15){
       clearMap()
       rentals.forEach((element) => {
-            var myDataPoint = L.marker([element.geoLoc.Latitude, element.geoLoc.Longitude], { icon: dataPointIcon }).addTo(map);
+            var myDataPoint = L.marker([element.geoLoc.Latitude, element.geoLoc.Longitude], { icon: dataPointIcon, id: element.id });
+            myDataPoint.addTo(map);
+            myDataPoint.on("click", function(event) {
+                $.getJSON(`http://localhost:3000/listings/${this.options.id}`, function (data) {
+                    populatePropertyInfo(data.PictureHref, data.Address, data.Suburb, data.RentPerWeek, Math.ceil(data.RentPerWeek / data.Bedrooms),
+                    data.Bedrooms, data.Bathrooms, data.Parking, "https://www.trademe.co.nz/Browse/Listing.aspx?id=" + data.ListingId)
+                })
+            });
             markers.push(myDataPoint);
             myDataPoint.bindTooltip("$" + element.rentPerRoom, { permanent: true }).openTooltip();
             myDataPoint.bindPopup('<img src='+element.houseImage+ ' width="100" height="80"><br> <p>$' + element.rentPerRoom +
               '<br>Bedrooms: ' + element.bedrooms + '<br>Bathrooms: ' + element.bathrooms +'</p>');
         })
       } else if(map._zoom == 14){
-        loadSuburbs();
+        clearMap();
+        loadSubPrices();
+        midPoints.forEach((point) => {
+          var myDataPoint = L.marker([point[1], point[0]], {icon: dataPointIcon}).addTo(map);
+          markers.push(myDataPoint);
+        })
       }
     });
 
@@ -190,7 +208,6 @@
 
       //console.log(data);
       data.forEach((element) => {
-        //console.log(element);
         rentals.push(element);
       })
       populateSidebarCityPrices(averages);
@@ -208,6 +225,23 @@
         // })
       }
 
+      function loadSubPrices(){
+        savedData.forEach((element) => {
+          var index = findSuburb(element.Name);
+          var myDataPoint = L.marker([midPoints[index][1], midPoints[index][0]], {icon: dataPointIcon}).addTo(map);
+          markers.push(myDataPoint);
+          myDataPoint.bindTooltip("$" + element.avgRent, { permanent: true }).openTooltip();
+        })
+      }
+
+      function findSuburb(sub){
+        for(var i = 0;i<suburbs.length;i++){
+          if(suburbs[i].properties.suburb === sub){
+            return i;
+          }
+        }
+
+      }
 
       function calculateAverage(element) {
         var maxLong = 170.0;
