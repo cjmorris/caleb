@@ -25,7 +25,7 @@ let body;
 
 const request_data = {
     // region=15 gets the retals from the greater wellington region.
-    url: 'https://api.trademe.co.nz/v1/Search/Property/Rental.json?region=15',
+    url: 'https://api.trademe.co.nz/v1/Search/Property/Rental.json?region=15?photo_size=FullSize',
     headers: {
         'Authorization': `OAuth oauth_consumer_key="${process.env.consumer_key}", oauth_signature_method="PLAINTEXT", oauth_signature="${process.env.consumer_secret}&"`
     },
