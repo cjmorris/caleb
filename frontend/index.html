@@ -181,9 +181,7 @@
       })
 
       for (var i = 0; i < subsWithPrices.length; i++) {
-        console.log(subsWithPrices);
         var sub = calculateAverage(subsWithPrices);
-        console.log(sub);
         var myDataPoint = L.marker(calculateAverage(subsWithPrices[i]), {icon: dataPointIcon}).addTo(map);
         myDataPoint.bindTooltip("$" + prices[i], { permanent: true }).openTooltip();
         markers.push(myDataPoint);
@@ -235,8 +233,8 @@
       }
 
       function findSuburb(sub){
-        for(var i = 0;i<suburbs.length;i++){
-          if(suburbs[i].properties.suburb === sub){
+        for(var i = 1;i<suburbs.length;i++){
+          if(suburbs[i-1].properties.suburb === sub){
             return i;
           }
         }
@@ -248,7 +246,8 @@
         var minLong = 180.0;
         var maxLat = -50.0
         var minLat = -40.0;
-        if(element.properties.suburb == "Island Bay"){ //contains 3 polygons
+        
+        if(element.properties.suburb === "Island Bay"){ //contains 3 polygons
           midPoints.push([174.771539, -41.336723]);
         }else{
           element.geometry.coordinates.forEach((instance) => {
